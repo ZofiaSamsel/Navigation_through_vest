@@ -11,8 +11,14 @@ ws = None
 active_keys = set([])
 connected_positions = set([])
 
-
+#--------------------------------------------------
+#create WebSocketReceiver class
+#--------------------------------------------------
 class WebSocketReceiver(WebSocket):
+    
+    #--------------------------------------------------
+    #create conection with the vest
+    #--------------------------------------------------
     def recv_frame(self):
         global active_keys
         global connected_positions
@@ -28,7 +34,7 @@ class WebSocketReceiver(WebSocket):
         except:
             active_keys = set([])
             connected_positions = set([])
-        print(active_keys)
+        #print(connected_positions)
 
         return frame
 
@@ -39,6 +45,9 @@ def thread_function(name):
             ws.recv_frame()
 
 
+#--------------------------------------------------
+#connect with the vest
+#--------------------------------------------------
 def initialize():
     global ws
     try:
@@ -52,25 +61,35 @@ def initialize():
         print("Couldn't connect")
         return
 
-
+#--------------------------------------------------
+#close the WebSocket connection
+#--------------------------------------------------
 def destroy():
     if ws is not None:
         ws.close()
 
-
+#--------------------------------------------------
+#return if there are any active keys
+#--------------------------------------------------
 def is_playing():
     return len(active_keys) > 0
 
-
+#--------------------------------------------------
+#return which keys are active
+#--------------------------------------------------
 def is_playing_key(key):
     return key in active_keys
 
-
-# position Vest Head ForeamrL ForearmR HandL HandR FootL FootR
+#--------------------------------------------------
+#return which device ins connected
+#position: Vest Head ForeamrL ForearmR HandL HandR FootL FootR
+#--------------------------------------------------
 def is_device_connected(position):
     return position in connected_positions
 
-
+#--------------------------------------------------
+#register tactile pattern form the .tact file
+#--------------------------------------------------
 def register(key, file_directory):
     json_data = open(file_directory).read()
 
@@ -91,11 +110,14 @@ def register(key, file_directory):
             }
         }]
     }
-
+    #convert to json 
     json_str = json.dumps(request)
+
     __submit(json_str)
 
-
+#--------------------------------------------------
+#simple submit tactile pattern and play it through the vest
+#--------------------------------------------------
 def submit_registered(key):
     request = {
         "Submit": [{
@@ -108,7 +130,9 @@ def submit_registered(key):
 
     __submit(json_str)
 
-
+#--------------------------------------------------
+#submit tactile pattern with specific features (altKey, rotation, scale) and play it through the vest
+#--------------------------------------------------
 def submit_registered_with_option(
         key, alt_key,
         scale_option,
@@ -131,7 +155,9 @@ def submit_registered_with_option(
 
     __submit(json_str)
 
-
+#--------------------------------------------------
+#create and submit tactile pattern
+#--------------------------------------------------
 def submit(key, frame):
     request = {
         "Submit": [{
@@ -145,7 +171,9 @@ def submit(key, frame):
 
     __submit(json_str)
 
-
+#--------------------------------------------------
+#create and submit tactile pattern with specific features (altKey, rotation, scale)
+#--------------------------------------------------
 def submit_dot(key, position, dot_points, duration_millis):
     front_frame = {
         "position": position,
@@ -154,7 +182,9 @@ def submit_dot(key, position, dot_points, duration_millis):
     }
     submit(key, front_frame)
 
-
+#--------------------------------------------------
+#send data do json
+#--------------------------------------------------    
 def __submit(json_str):
     if ws is not None:
         ws.send(json_str)
