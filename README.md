@@ -3,7 +3,7 @@ A program that simulates the direction of incoming obstacles. The person has to 
 
 Prejerestration of the project available here: ..soooon..
 
-#Description  
+# Description  
 
 Haptic feedback is a tool to help navigate an environment that is constantly changing (Kaul et al., 2021, Gay et al., 2020, Klatzky et al., 2006). Because it can warn of impending danger without distracting attention from the leading task, it can be used by drivers to warn of approaching other road users (Di & Campli San Vito et al., 2019). Additionally, it can be used to navigate visually impaired people and alert them to the dangerous obstacles around them.  
 
@@ -15,7 +15,7 @@ The tactile patterns included in this project are three vibrotactile engine stim
 
 The result may contribute to the development of the current navigation warning system for blind people or can be used in cars or other vehicles to increase road safety. 
 
-#Study design 
+# Study design 
 
 Repeated-measures design wherein reaction time and accuracy of the prediction of the direction of incoming danger are measured in response to 3 different conditions of patterns (one vibrotactile engine, a column of four vibrotactile engines, a wave created by three vibrotactile motors activated one after the other) across 2 conditions (on the left and right side of the back).  
 
@@ -24,7 +24,7 @@ We designed a study in which the subject is asked to recognize the direction (le
 After the test, individuals complete a NASA TLX questionnaire (available here: https://humansystems.arc.nasa.gov/groups/TLX/) that allows subjective determination of perceived workload to assess a task.  
 
 
-Three vibrotactile patterns are used in the study.  
+## Three vibrotactile patterns are used in the study.  
 - The first pattern involves activating a single engine on the left or right side of the vest on the back. The vibration has a constant intensity and lasts for 3s.  
 - The second pattern - "a column pattern condition" - refers to the activation of four motors located one below the other on the left or right side of the vest on the back (forming a column). The motors are activated simultaneously and have a constant intensity. A single stimulus lasts 3s.  
 - The third pattern - "a wave pattern condition" - involves activating three engines, located in the middle row of the vest, one after the other creating a vibration wave from left to right or vice versa. Each of the motors is active for 1s. Automatically when the activation of one is over, the next engine turns on. Each vibration has a fixed frequency.  
@@ -32,7 +32,7 @@ Three vibrotactile patterns are used in the study.
 The test subjects' task is to click the "q" key, respectively, if a motor on the left side of the vest is activated or "a wave pattern” condition stimulus ends on the left side, or "p" if an engine on the right side of the vest is activated or "a wave pattern” condition stimulus ends on the right side. 
 
 
-Project in the process....
+## Project in the process....
 
 
 Sources: 
