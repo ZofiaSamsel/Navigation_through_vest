@@ -1,25 +1,27 @@
 # Navigation_through_vest
+The project conducted in partial requirement to obtain bachelor’s diploma in Cognitive Science from Jagiellonian University.
+
 A program that simulates the direction of incoming obstacles. The person has to determine from which side the obstacle is coming using arrows. The code was inspired by the project: https://github.com/bhaptics/tact-python
 
-Prejerestration of the project available here: ..soooon..
+Pre-registration of the project available here: https://osf.io/awj6t.
 
 # Description  
 
-Haptic feedback is a tool to help navigate an environment that is constantly changing (Kaul et al., 2021, Gay et al., 2020, Klatzky et al., 2006). Because it can warn of impending danger without distracting attention from the leading task, it can be used by drivers to warn of approaching other road users (Di & Campli San Vito et al., 2019). Additionally, it can be used to navigate visually impaired people and alert them to the dangerous obstacles around them.  
+Haptic feedback is a tool used to help navigate a constantly changing environment  (Kaul et al., 2021, Gay et al., 2020, Klatzky et al., 2006). Because it can warn of impending danger without distracting attention from the leading task, it can be used to alert drivers to approaching obstacles (vehicles) (Di & Campli San Vito et al., 2019). Additionally, it can be used to navigate visually impaired people and alert them to the dangerous obstacles around them.  
 
-One tool that allows for the transmission of tactile information about danger is the tactile vest. There are many different combinations of engine activation possible to activate through those tools.  
+One of the tools which allow for the transmission of tactile information about danger is the tactile vest. There are many different combinations of engine activation possible to activate through these tools.  
 
-The research purpose of this project is to determine which tactile pattern could be used in the navigation warning system to best facilitate performance (specifically shortening their reaction time with low cognitive load).   
+The research purpose of this project is to determine which tactile pattern could be used in a navigation warning system to best facilitate performance (specifically shortening user’s reaction time with low cognitive load).   
 
-The tactile patterns included in this project are three vibrotactile engine stimuli presented on the haptic vest informing of an obstacle coming from the subject's left or right. Two of them are pinpoint stimuli consisting of either one or four (arranged in a column) vibrotactile engines which suggest the direction of the incoming danger based on their location (left or right side of the vest's back). There is also one pattern composed of three vibrotactile engines that activate one after the other creating a wave that suggests the direction of the incoming danger by the movement.  
+The tactile patterns included in this project are three vibrotactile engine stimuli presented on the haptic vest informing of an obstacle coming from the subject's left or right. Two of them are pinpoint stimuli consisting of either one or four vibrotactile engines (arranged in a column) which suggest the direction of the incoming danger based on their location (left or right side of the vest's back). There is also one pattern composed of three vibrotactile engines that activate one by one creating a wave that suggests the direction of the incoming danger by the movement.  
 
-The result may contribute to the development of the current navigation warning system for blind people or can be used in cars or other vehicles to increase road safety. 
+Results of this study may contribute to the development of the current navigation warning system for blind people or can be used in cars or other vehicles to increase road safety. 
 
 # Study design 
 
 Repeated-measures design wherein reaction time and accuracy of the prediction of the direction of incoming danger are measured in response to 3 different conditions of patterns (one vibrotactile engine, a column of four vibrotactile engines, a wave created by three vibrotactile motors activated one after the other) across 2 conditions (on the left and right side of the back).  
 
-We designed a study in which the subject is asked to recognize the direction (left or right) of incoming danger by correct and quick recognition of tactile patterns simulated by the bHaptics TackSuit X40 haptic vest. Three types of stimuli are designed: one pinpoint vibrotactile engine on the left or right side of the vest, a column of four pinpoint vibrotactile engines activated at the same time on the left or right side of the vest (a column pattern condition), a row of three vibrotactile engines that turn on one after the other to suggest the direction of an approaching obstacle by movement (a wave pattern condition). The participants will have to click the "q" or "p" letter according to the direction they believe the obstacle will occur.  
+We designed a study in which the subject is asked to recognize the direction (left or right) of incoming danger by correct and quick recognition of tactile patterns simulated by the bHaptics TackSuit X40 haptic vest. Three types of stimuli are designed: one pinpoint vibrotactile engine on the left or right side of the vest, a column of four pinpoint vibrotactile engines activated at the same time on the left or right side of the vest (a column pattern condition), a row of three vibrotactile engines that turn on, one after the other to suggest the direction of an approaching obstacle by movement (a wave pattern condition). The participants will have to click the "q" or "p" keyboard button according to the direction they believe the obstacle will occur.  
 
 After the test, individuals complete a NASA TLX questionnaire (available here: https://humansystems.arc.nasa.gov/groups/TLX/) that allows subjective determination of perceived workload to assess a task.  
 
@@ -32,7 +34,7 @@ After the test, individuals complete a NASA TLX questionnaire (available here: h
 The test subjects' task is to click the "q" key, respectively, if a motor on the left side of the vest is activated or "a wave pattern” condition stimulus ends on the left side, or "p" if an engine on the right side of the vest is activated or "a wave pattern” condition stimulus ends on the right side. 
 
 
-## Project in the process....
+## The project is work in progress...
 
 
 Sources: 
