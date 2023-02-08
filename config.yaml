@@ -2,13 +2,14 @@
 BACKGROUND_COLOR: gray
 NO_BLOCK_TRAIN: 1  #ilość bloków tren.
 NO_BLOCK_EXP: 2 #ilość bloków eksp.
-N_TRIALS_TRAIN: 10
-N_TRIALS_EXP: 15 #ilość powtórzeń w bloku
+N_TRIALS_TRAIN: 1
+N_TRIALS_EXP: 2 #ilość powtórzeń w bloku
 REACTION_KEYS: ['q', 'p', 'g']
-RESULTS: [["PART_ID", "TRIAL", "TRAINING", "CORRECT", "CONGRUENT","LATENCY"]]
+SCALE: ['1','2','3','4','5','6','7','8','9','g']
+RESULTS: [["PART_ID", "TRIAL", "TRAINING", "CORRECT", "CONGRUENT", "CONFIDENCE", "LATENCY"]]
 TIME_BREAK: 1
 TIME_MAX: 4
-TIME_FOR_REAST: 30 #czas pomiędzy blokami -- zmienić na 30
+TIME_FOR_REAST: 5 #czas pomiędzy blokami -- zmienić na 30
 FIX_CROSS_TIME: 1  #czas miedzy + a bodźcem
 FIX_CROSS_COLOR: black
 FIX_CROSS_SIZE: 60

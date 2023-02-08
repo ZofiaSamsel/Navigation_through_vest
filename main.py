@@ -34,7 +34,7 @@ conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 
 clock = core.Clock()
 
-RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "LATENCY"]]
+RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "CONFIDENCE", "LATENCY"]]
 
 #--------------------------------------------------
 #read text from file or add some extra text
@@ -56,33 +56,54 @@ def read_text_from_file(file_name, insert=''):
 #--------------------------------------------------
 #show the info; with the SPACE button
 #--------------------------------------------------
-def show_info(win, file_name, insert=''):
+type = ""
+def show_info(win, file_name, type, insert=''):
     msg = read_text_from_file(file_name, insert=insert)
     msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
     msg.draw()
-    play('TEST')
-    win.flip()
-    key = event.waitKeys(keyList=['g', 'space', 't'])
-    if key == ['g']:
-        win.close()
-        core.quit()
-    elif key == ['t']:
-        play('TEST')
     win.flip()
 
-#--------------------------------------------------
-#show the info; without the SPACE button
-#--------------------------------------------------
-def show_info_br(win, file_name, insert=''):
-    msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
-    msg.draw()
-    win.flip()
-    key = event.getKeys(keyList=['g'])
-    if key == ['g']:
-        win.close()
-        core.quit()
-    #test the vest
+    if type == "with_space":
+        key = event.waitKeys(keyList=['g', 'space'])
+        if key == ['g']:
+            win.close()
+            core.quit()
+        win.flip()
+    elif type == "with_test":
+        core.wait(2)
+        play('TEST')
+        key = event.waitKeys(keyList=['g', 'space', 't'])
+        if key == ['g']:
+            win.close()
+            core.quit()
+        elif key == ['t']:
+            play('TEST')
+        win.flip()
+    elif type == "with_scale":
+        key = event.getKeys(conf['SCALE'])
+        if key == ['g']:
+            win.close()
+            core.quit()   
+    elif type == "without_space":
+        key = event.getKeys(keyList=['g'])
+        if key == ['g']:
+            win.close()
+            core.quit()
+
+
+# #--------------------------------------------------
+# #show the info; without the SPACE button
+# #--------------------------------------------------
+# def show_info_br(win, file_name, insert=''):
+#     msg = read_text_from_file(file_name, insert=insert)
+#     msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
+#     msg.draw()
+#     win.flip()
+#     key = event.getKeys(keyList=['g'])
+#     if key == ['g']:
+#         win.close()
+#         core.quit()
+#     #test the vest
 
 #--------------------------------------------------
 #save data in the .csv file
@@ -130,8 +151,8 @@ def play(index):
 #--------------------------------------------------
 #one trial
 #--------------------------------------------------
-def run_trial(win):
-    global key, rt, corr, pattern, stim_type, prev_stim
+def run_trial(win, version):
+    global key, rt, corr, pattern, confidence, stim_type, prev_stim
 
     # losowanie bodzca tak, ze nie ma dwoch takich samych po sobie
     stim_type = random.choice(list(stim))
@@ -165,11 +186,12 @@ def run_trial(win):
     if clock.getTime() > conf['TIME_MAX']:
         rt = '-'
 
-    # stim[stim_type].setAutoDraw(False)
+    confidence = '-'
+
     fix.setAutoDraw(False)
     win.flip()
 
-    # przerwa pomiedzy trialami
+    # breake between trials
     core.wait(conf['STIM_BREAK'])
 
     # pattern 
@@ -190,10 +212,19 @@ def run_trial(win):
     else:
         corr = "-"
 
-    RESULTS.append([ID, trial_no, train, pattern, corr, rt])
+    # clarity info
+    if version =='confidence':
+        event.clearEvents()
+        win.callOnFlip(clock.reset)
+        show_info(window, join('.', 'messages', 'clarity_mess.txt'), "with_scale")
+        confidence = event.waitKeys(maxWait = conf['TIME_MAX'], keyList = conf['SCALE'])
+
+
+
+    RESULTS.append([ID, trial_no, train, pattern, corr, confidence, rt])
 
 #-----------------------------------------------------------------------------
-# okno dialogowe
+# info window
 info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
 dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :)')
 if not dlg.OK:
@@ -216,11 +247,11 @@ fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], heigh
 stim = ('1_L','1_R', '2_L','2_R', '3_L','3_R')
 
 # display first info
-show_info(window, join('.', 'messages', 'instr.txt'))
-show_info(window, join('.', 'messages', 'instr2.txt'))
+show_info(window, join('.', 'messages', 'instr.txt'), "with_space")
+show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 
 #training
-show_info(window, join('.', 'messages', 'train_mess.txt'))
+show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
 for block_no in range(conf['NO_BLOCK_TRAIN']):
     for a in range(conf['N_TRIALS_TRAIN']):
@@ -228,35 +259,40 @@ for block_no in range(conf['NO_BLOCK_TRAIN']):
             prev_stim = '0'
         trial_no = a + 1
         train = 1
-        run_trial(window)
+        run_trial(window, 'time')
     window.flip()
 
 # final experiment
-show_info(window, join('.', 'messages', 'exp_mess.txt'))
+show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
 
-for block_no in range(conf['NO_BLOCK_EXP']):
-    for i in range(conf['N_TRIALS_EXP']):
-        if i == 0:
-            prev_stim = '0'
-        trial_no = i + 1
-        train = 0
-        run_trial(window)
+for i in range(conf['N_TRIALS_EXP']):
+    if i == 0:
+        prev_stim = '0'
+    trial_no = i + 1
+    train = 0
+    run_trial(window, 'time')
 
-    if block_no != conf['NO_BLOCK_EXP'] - 1:
+# po 0 sek od wyswietlenia bodzca nie ma reakcji na klikniecie klawisze
+event.waitKeys(maxWait=0)
 
-        # po 0 sek od wyswietlenia bodzca nie ma reakcji na klikniecie klawisze
-        event.waitKeys(maxWait=0)
+# for TIME_FOR_REAST display the mess without SPACE
+timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
+while timer.getTime() > 0:
+    show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
+show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
+window.flip()
 
-        # for TIME_FOR_REAST display the mess without SPACE
-        timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
-        while timer.getTime() > 0:
-            show_info_br(window, join('.', 'messages', 'break_mess.txt'))
-        show_info(window, join('.', 'messages', 'break_mess2.txt'))
-        window.flip()
+for i in range(conf['N_TRIALS_EXP']):
+    if i == 0:
+        prev_stim = '0'
+    trial_no = i + 1
+    train = 0
+    run_trial(window, 'confidence')
+
 
 # ending
 save_data()
-show_info(window, join('.', 'messages', 'fin_mess.txt'))
+show_info(window, join('.', 'messages', 'fin_mess.txt'), "with_space")
 window.close()
 core.quit()
 

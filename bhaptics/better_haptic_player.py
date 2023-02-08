@@ -71,21 +71,21 @@ def destroy():
 #--------------------------------------------------
 #return if there are any active keys
 #--------------------------------------------------
-def is_playing():
-    return len(active_keys) > 0
+# def is_playing():
+#     return len(active_keys) > 0
 
 #--------------------------------------------------
 #return which keys are active
 #--------------------------------------------------
-def is_playing_key(key):
-    return key in active_keys
+# def is_playing_key(key):
+#     return key in active_keys
 
 #--------------------------------------------------
 #return which device ins connected
 #position: Vest Head ForeamrL ForearmR HandL HandR FootL FootR
 #--------------------------------------------------
-def is_device_connected(position):
-    return position in connected_positions
+# def is_device_connected(position):
+#     return position in connected_positions
 
 #--------------------------------------------------
 #register tactile pattern form the .tact file
