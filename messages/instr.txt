@@ -1,0 +1,11 @@
+Na ekranie wyświetlać się będzie słowo LEWO lub PRAWO.
+
+Twoim zadaniem będzie naciśnięcie klawisza p w przypadku pojawienia się słowa PRAWO
+i klawisza q w przypadku pojawienia się słowa LEWO.
+
+Miejsce pojawienia się słowa nie ma znaczenia.
+
+
+
+
+Kliknij SPACJĘ, by kontynuować.
