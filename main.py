@@ -9,6 +9,33 @@ from psychopy import visual, event, gui, core
 from bhaptics import better_haptic_player as player
 import atexit
 
+
+#create player
+player.initialize()
+
+#register patterns
+print("register 1_L")
+player.register("1_L", "1_L.tact")
+print("register 2_L")
+player.register("2_L", "2_L.tact")
+print("register 3_L")
+player.register("3_L", "3_L.tact")
+print("register 1_R")
+player.register("1_R", "1_R.tact")
+print("register 2_R")
+player.register("2_R", "2_R.tact")
+print("register 3_R")
+player.register("3_R", "3_R.tact")
+print("register Circle")
+player.register("Circle", "Circle.tact")
+
+# load config file
+conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
+
+clock = core.Clock()
+
+RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "LATENCY"]]
+
 #--------------------------------------------------
 #read text from file or add some extra text
 #file_name: the name of the file to read
@@ -33,11 +60,14 @@ def show_info(win, file_name, insert=''):
     msg = read_text_from_file(file_name, insert=insert)
     msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
     msg.draw()
+    play('TEST')
     win.flip()
-    key = event.waitKeys(keyList=['g', 'space'])
+    key = event.waitKeys(keyList=['g', 'space', 't'])
     if key == ['g']:
         win.close()
         core.quit()
+    elif key == ['t']:
+        play('TEST')
     win.flip()
 
 #--------------------------------------------------
@@ -52,6 +82,7 @@ def show_info_br(win, file_name, insert=''):
     if key == ['g']:
         win.close()
         core.quit()
+    #test the vest
 
 #--------------------------------------------------
 #save data in the .csv file
@@ -61,7 +92,9 @@ def save_data():
         write = csv.writer(df)
         write.writerows(RESULTS)
 
-    #create a method which submits patterns according to index 
+#--------------------------------------------------
+#submits patterns according to index 
+#--------------------------------------------------
 def play(index):
     if index == '1_L':
         print("submit 1_L")
@@ -81,12 +114,22 @@ def play(index):
     elif index == '3_R':
         print("submit 3_R")
         player.submit_registered("3_R")
+    elif index == "FIX":
+        print("submit FIX")
+        player.submit_dot("backFrame", "VestBack", [{"index": 6, "intensity": 100}], 500)
+    elif index == "TEST":
+        print("submit TEST")
+        player.submit_registered("Circle")
+
     return index
         # print("submit Circle With Diff AltKey")
         # player.submit_registered_with_option("Circle", "alt2",
         #                                      scale_option={"intensity": 1, "duration": 1},
         #                                      rotation_option={"offsetAngleX": 0, "offsetY": 0})
 
+#--------------------------------------------------
+#one trial
+#--------------------------------------------------
 def run_trial(win):
     global key, rt, corr, pattern, stim_type, prev_stim
 
@@ -98,6 +141,7 @@ def run_trial(win):
 
     # punkt fiksacji
     fix.setAutoDraw(True)
+    play('FIX')
     win.flip()
     core.wait(conf['FIX_CROSS_TIME'])  # wyswietlanie samego punktu fiksacji
 
@@ -106,7 +150,6 @@ def run_trial(win):
     win.callOnFlip(clock.reset)
 
     play(stim_type)
-    pattern = stim_type
     win.flip()
 
     # czekanie na reakcje
@@ -121,7 +164,6 @@ def run_trial(win):
    
     if clock.getTime() > conf['TIME_MAX']:
         rt = '-'
-
 
     # stim[stim_type].setAutoDraw(False)
     fix.setAutoDraw(False)
@@ -138,7 +180,7 @@ def run_trial(win):
     elif (stim_type == "3_L") or (stim_type == "3_R"):
         pattern = 3
 
-    # corr = poprawnosc
+    # corr = correctness
     if (stim_type == "1_L" and key == ['q']) or (stim_type == "2_L" and key == ['q']) or (stim_type == "3_L" and key == ['q']) or \
         (stim_type == "1_R" and key == ['p']) or (stim_type == "2_R" and key == ['p']) or (stim_type == "3_R" and key == ['q']):
         corr = 1
@@ -150,35 +192,7 @@ def run_trial(win):
 
     RESULTS.append([ID, trial_no, train, pattern, corr, rt])
 
-
-
 #-----------------------------------------------------------------------------
-# main
-clock = core.Clock()
-#create player
-player.initialize()
-
-#register patterns
-print("register 1_L")
-player.register("1_L", "1_L.tact")
-print("register 2_L")
-player.register("2_L", "2_L.tact")
-print("register 3_L")
-player.register("3_L", "3_L.tact")
-print("register 1_R")
-player.register("1_R", "1_R.tact")
-print("register 2_R")
-player.register("2_R", "2_R.tact")
-print("register 3_R")
-player.register("3_R", "3_R.tact")
-
-# zaladowanie pliku config z parametrami
-conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
-
-# ustawienia wizualne dla okna dialogowego
-# window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=False, size=(400, 400))
-# window.setMouseVisible(True)
-
 # okno dialogowe
 info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
 dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :)')
@@ -186,29 +200,27 @@ if not dlg.OK:
     print("User exited")
     core.quit()
 
-# Og�lne ID badanych zlozone z informacji podanych w oknie dialogowym
+# create ID
 ID = info['ID'] + info['PLEC'] + info['WIEK']
 
-# nazwa pliku csv z wynikami badanego
+# create the data file 
 datafile = '{}.csv'.format(ID)
 
-# ustawienia okna na czas eksperymentu
-window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=False, size=(500, 500))
+# create window
+window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=False, size=(1000, 1000))
 window.setMouseVisible(True)
 
-# bodzce
+# stimuli
 fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], height=conf['FIX_CROSS_SIZE'])
 
 stim = ('1_L','1_R', '2_L','2_R', '3_L','3_R')
 
-# informacje o eksperymencie, instrukcje
+# display first info
 show_info(window, join('.', 'messages', 'instr.txt'))
 show_info(window, join('.', 'messages', 'instr2.txt'))
 
-# trening
+#training
 show_info(window, join('.', 'messages', 'train_mess.txt'))
-
-RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "LATENCY"]]
 
 for block_no in range(conf['NO_BLOCK_TRAIN']):
     for a in range(conf['N_TRIALS_TRAIN']):
@@ -219,7 +231,7 @@ for block_no in range(conf['NO_BLOCK_TRAIN']):
         run_trial(window)
     window.flip()
 
-# eksperyment
+# final experiment
 show_info(window, join('.', 'messages', 'exp_mess.txt'))
 
 for block_no in range(conf['NO_BLOCK_EXP']):
@@ -235,14 +247,14 @@ for block_no in range(conf['NO_BLOCK_EXP']):
         # po 0 sek od wyswietlenia bodzca nie ma reakcji na klikniecie klawisze
         event.waitKeys(maxWait=0)
 
-        # przez TIME_FOR_REAST pakazuje sie info bez spacji
+        # for TIME_FOR_REAST display the mess without SPACE
         timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
         while timer.getTime() > 0:
             show_info_br(window, join('.', 'messages', 'break_mess.txt'))
         show_info(window, join('.', 'messages', 'break_mess2.txt'))
         window.flip()
 
-# zakonczenie
+# ending
 save_data()
 show_info(window, join('.', 'messages', 'fin_mess.txt'))
 window.close()

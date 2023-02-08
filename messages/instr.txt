@@ -1,9 +1,10 @@
-Na ekranie wyświetlać się będzie słowo LEWO lub PRAWO.
+Na placech kamizelki będa prezentowane bodźce sugerujące zbliżające się bezpieczeństwo
+po lewej lub prawej stronie.
 
-Twoim zadaniem będzie naciśnięcie klawisza p w przypadku pojawienia się słowa PRAWO
-i klawisza q w przypadku pojawienia się słowa LEWO.
+Twoim zadaniem będzie naciśnięcie klawisza P w przypadku, gdy zdentyfikujesz bodziec
+jako ostrzeżenie z PRAWEJ strony i klawisza Q w przypadku niebezpieczeństwa 
+z LEWEJ.
 
-Miejsce pojawienia się słowa nie ma znaczenia.
 
 
 
