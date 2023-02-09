@@ -1,3 +1,4 @@
+# source: https://github.com/bhaptics/tact-python
 #--------------------------------------------------
 #import json, socket, websocket, threading libraries
 #--------------------------------------------------
@@ -67,25 +68,6 @@ def initialize():
 def destroy():
     if ws is not None:
         ws.close()
-
-#--------------------------------------------------
-#return if there are any active keys
-#--------------------------------------------------
-# def is_playing():
-#     return len(active_keys) > 0
-
-#--------------------------------------------------
-#return which keys are active
-#--------------------------------------------------
-# def is_playing_key(key):
-#     return key in active_keys
-
-#--------------------------------------------------
-#return which device ins connected
-#position: Vest Head ForeamrL ForearmR HandL HandR FootL FootR
-#--------------------------------------------------
-# def is_device_connected(position):
-#     return position in connected_positions
 
 #--------------------------------------------------
 #register tactile pattern form the .tact file
@@ -188,3 +170,22 @@ def submit_dot(key, position, dot_points, duration_millis):
 def __submit(json_str):
     if ws is not None:
         ws.send(json_str)
+
+#--------------------------------------------------
+#return if there are any active keys
+#--------------------------------------------------
+# def is_playing():
+#     return len(active_keys) > 0
+
+#--------------------------------------------------
+#return which keys are active
+#--------------------------------------------------
+# def is_playing_key(key):
+#     return key in active_keys
+
+#--------------------------------------------------
+#return which device ins connected
+#position: Vest Head ForeamrL ForearmR HandL HandR FootL FootR
+#--------------------------------------------------
+# def is_device_connected(position):
+#     return position in connected_positions

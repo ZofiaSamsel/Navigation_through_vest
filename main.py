@@ -1,5 +1,8 @@
 # !/usr/bin/env python
 # -*- coding: latin-1 -*-
+#--------------------------------------------------
+#imports
+#--------------------------------------------------
 import codecs
 import random
 import csv
@@ -34,6 +37,7 @@ conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 
 clock = core.Clock()
 
+# RESULTS = conf(['RESULTS'])
 RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "CONFIDENCE", "LATENCY"]]
 
 #--------------------------------------------------
@@ -54,7 +58,7 @@ def read_text_from_file(file_name, insert=''):
     return ''.join(msg)
 
 #--------------------------------------------------
-#show the info; with the SPACE button
+#show the info
 #--------------------------------------------------
 type = ""
 def show_info(win, file_name, type, insert=''):
@@ -63,47 +67,41 @@ def show_info(win, file_name, type, insert=''):
     msg.draw()
     win.flip()
 
+    #only specific keyboard buttons are available 
+    #with space button
     if type == "with_space":
         key = event.waitKeys(keyList=['g', 'space'])
         if key == ['g']:
             win.close()
+            player.destroy()
             core.quit()
         win.flip()
+    #with the test button and space
     elif type == "with_test":
         core.wait(2)
         play('TEST')
         key = event.waitKeys(keyList=['g', 'space', 't'])
         if key == ['g']:
             win.close()
+            player.destroy()
             core.quit()
         elif key == ['t']:
             play('TEST')
         win.flip()
+    # with the 1-9 lickert scale
     elif type == "with_scale":
         key = event.getKeys(conf['SCALE'])
         if key == ['g']:
             win.close()
+            player.destroy()
             core.quit()   
+    #only exit button is available
     elif type == "without_space":
         key = event.getKeys(keyList=['g'])
         if key == ['g']:
             win.close()
+            player.destroy()
             core.quit()
-
-
-# #--------------------------------------------------
-# #show the info; without the SPACE button
-# #--------------------------------------------------
-# def show_info_br(win, file_name, insert=''):
-#     msg = read_text_from_file(file_name, insert=insert)
-#     msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
-#     msg.draw()
-#     win.flip()
-#     key = event.getKeys(keyList=['g'])
-#     if key == ['g']:
-#         win.close()
-#         core.quit()
-#     #test the vest
 
 #--------------------------------------------------
 #save data in the .csv file
@@ -149,31 +147,46 @@ def play(index):
         #                                      rotation_option={"offsetAngleX": 0, "offsetY": 0})
 
 #--------------------------------------------------
+#randomisation of the trials
+#return the list of the trials in the random order
+#--------------------------------------------------
+def shaffle_trials(number_of_trials, number_of_patters):
+    sets = int(number_of_trials/number_of_patters)
+    stim_order = []
+    [stim_order.extend(list(stim))  for i in range(sets) ]
+    print(stim_order)
+    random.shuffle(stim_order)  
+    return stim_order
+
+#--------------------------------------------------
 #one trial
 #--------------------------------------------------
-def run_trial(win, version):
-    global key, rt, corr, pattern, confidence, stim_type, prev_stim
+def run_trial(win, order, number, version):
+    global key, rt, corr, pattern, confidence, stim_type
+    # stim_type, prev_stim
 
-    # losowanie bodzca tak, ze nie ma dwoch takich samych po sobie
-    stim_type = random.choice(list(stim))
-    while stim_type == prev_stim:
-        stim_type = random.choice(list(stim))
-    prev_stim = stim_type
+    # removing two of the same type
+    # stim_type = random.choice(list(stim))
+    # while stim_type == prev_stim:
+    #     stim_type = random.choice(list(stim))
+    # prev_stim = stim_type
 
-    # punkt fiksacji
+    # fixation
     fix.setAutoDraw(True)
     play('FIX')
     win.flip()
-    core.wait(conf['FIX_CROSS_TIME'])  # wyswietlanie samego punktu fiksacji
+    core.wait(conf['FIX_CROSS_TIME']) 
 
-    # rozpoczecie trialu
+    #create the screen
     event.clearEvents()
     win.callOnFlip(clock.reset)
 
-    play(stim_type)
+    # play the stimulus
+    play(order[number])
+    stim_type = order[number]
     win.flip()
 
-    # czekanie na reakcje
+    # reaction 
     while clock.getTime() <= conf['TIME_MAX']:
         key = event.getKeys(conf['REACTION_KEYS'])
         if key == ['q'] or key == ['p']:
@@ -181,6 +194,7 @@ def run_trial(win, version):
             break
         if key == ['g']:
             win.close()
+            player.destroy()
             core.quit()
    
     if clock.getTime() > conf['TIME_MAX']:
@@ -191,10 +205,17 @@ def run_trial(win, version):
     fix.setAutoDraw(False)
     win.flip()
 
+    # clarity info
+    if version =='confidence':
+        event.clearEvents()
+        win.callOnFlip(clock.reset)
+        show_info(window, join('.', 'messages', 'clarity_mess.txt'), "with_scale")
+        confidence = event.waitKeys(maxWait = conf['TIME_MAX'], keyList = conf['SCALE'])
+
     # breake between trials
     core.wait(conf['STIM_BREAK'])
 
-    # pattern 
+    # pattern type
     if (stim_type == "1_L") or (stim_type == "1_R"):
         pattern = 1
     elif (stim_type == "2_L") or (stim_type == "2_R"):
@@ -212,17 +233,10 @@ def run_trial(win, version):
     else:
         corr = "-"
 
-    # clarity info
-    if version =='confidence':
-        event.clearEvents()
-        win.callOnFlip(clock.reset)
-        show_info(window, join('.', 'messages', 'clarity_mess.txt'), "with_scale")
-        confidence = event.waitKeys(maxWait = conf['TIME_MAX'], keyList = conf['SCALE'])
-
-
-
     RESULTS.append([ID, trial_no, train, pattern, corr, confidence, rt])
 
+#-----------------------------------------------------------------------------
+# experiment
 #-----------------------------------------------------------------------------
 # info window
 info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
@@ -243,7 +257,6 @@ window.setMouseVisible(True)
 
 # stimuli
 fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], height=conf['FIX_CROSS_SIZE'])
-
 stim = ('1_L','1_R', '2_L','2_R', '3_L','3_R')
 
 # display first info
@@ -253,26 +266,27 @@ show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 #training
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
-for block_no in range(conf['NO_BLOCK_TRAIN']):
-    for a in range(conf['N_TRIALS_TRAIN']):
-        if a == 0:
-            prev_stim = '0'
-        trial_no = a + 1
-        train = 1
-        run_trial(window, 'time')
-    window.flip()
+# for block_no in range(conf['NO_BLOCK_TRAIN']):
+order = shaffle_trials(int(conf['N_TRIALS_TRAIN']), len(stim))
+# order = shaffle_trials(30,6)
+print(order)
+for a in range(conf['N_TRIALS_TRAIN']):
+    trial_no = a + 1
+    train = 1
+    run_trial(window,order, a, 'time')
+window.flip()
 
 # final experiment
 show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
 
+order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
 for i in range(conf['N_TRIALS_EXP']):
     if i == 0:
         prev_stim = '0'
     trial_no = i + 1
     train = 0
-    run_trial(window, 'time')
+    run_trial(window,order , i,'time')
 
-# po 0 sek od wyswietlenia bodzca nie ma reakcji na klikniecie klawisze
 event.waitKeys(maxWait=0)
 
 # for TIME_FOR_REAST display the mess without SPACE
@@ -282,13 +296,13 @@ while timer.getTime() > 0:
 show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
 window.flip()
 
+order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
 for i in range(conf['N_TRIALS_EXP']):
     if i == 0:
         prev_stim = '0'
     trial_no = i + 1
     train = 0
-    run_trial(window, 'confidence')
-
+    run_trial(window, order, i, 'confidence') # with confidence space
 
 # ending
 save_data()
