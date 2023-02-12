@@ -136,9 +136,12 @@ def play(index):
     elif index == "FIX":
         print("submit FIX")
         player.submit_dot("backFrame", "VestBack", [{"index": 6, "intensity": 100}], 500)
+        player.submit_dot("backFrame", "VestBack", [{"index": 7, "intensity": 100}], 500)
     elif index == "TEST":
         print("submit TEST")
-        player.submit_registered("Circle")
+        # player.submit_registered("Circle")
+        for i in range(0,20):
+            player.submit_dot("backFrame", "VestBack", [{"index": i, "intensity": 100}], 500)
 
     return index
         # print("submit Circle With Diff AltKey")
@@ -153,7 +156,7 @@ def play(index):
 def shaffle_trials(number_of_trials, number_of_patters):
     sets = int(number_of_trials/number_of_patters)
     stim_order = []
-    [stim_order.extend(list(stim))  for i in range(sets) ]
+    [stim_order.extend(list(stim))  for i in range(sets)]
     print(stim_order)
     random.shuffle(stim_order)  
     return stim_order
@@ -163,13 +166,6 @@ def shaffle_trials(number_of_trials, number_of_patters):
 #--------------------------------------------------
 def run_trial(win, order, number, version):
     global key, rt, corr, pattern, confidence, stim_type
-    # stim_type, prev_stim
-
-    # removing two of the same type
-    # stim_type = random.choice(list(stim))
-    # while stim_type == prev_stim:
-    #     stim_type = random.choice(list(stim))
-    # prev_stim = stim_type
 
     # fixation
     fix.setAutoDraw(True)
@@ -267,9 +263,7 @@ show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
 # for block_no in range(conf['NO_BLOCK_TRAIN']):
-order = shaffle_trials(int(conf['N_TRIALS_TRAIN']), len(stim))
-# order = shaffle_trials(30,6)
-print(order)
+order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
 for a in range(conf['N_TRIALS_TRAIN']):
     trial_no = a + 1
     train = 1
