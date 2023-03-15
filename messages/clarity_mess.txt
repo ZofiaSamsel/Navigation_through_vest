@@ -1,3 +1,3 @@
-Jak pewny jesteś swojej odpowiedzi?
+Jak bardzo jesteś pewnie swojej odpowiedzi?
 
-1 - bardzo źle, 4 - nie mam zdania, 7 - bardzo dobrze
+1 - absolutnie nie, 4 - nie wiem, 7 - absolutnie tak

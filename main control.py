@@ -9,28 +9,10 @@ import csv
 from os.path import join
 import yaml
 from psychopy import visual, event, gui, core
-from bhaptics import better_haptic_player as player
 import atexit
 
 
-#create player
-player.initialize()
 
-#register patterns
-print("register 1_L")
-player.register("1_L", "1_L.tact")
-print("register 2_L")
-player.register("2_L", "2_L.tact")
-print("register 3_L")
-player.register("3_L", "3_L.tact")
-print("register 1_R")
-player.register("1_R", "1_R.tact")
-print("register 2_R")
-player.register("2_R", "2_R.tact")
-print("register 3_R")
-player.register("3_R", "3_R.tact")
-print("register Circle")
-player.register("Circle", "Circle.tact")
 
 # load config file
 conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
@@ -38,7 +20,7 @@ conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 clock = core.Clock()
 
 # RESULTS = conf(['RESULTS'])
-RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "CONFIDENCE", "LATENCY"]]
+RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "LATENCY"]]
 
 #--------------------------------------------------
 #read text from file or add some extra text
@@ -73,34 +55,20 @@ def show_info(win, file_name, type, insert=''):
         key = event.waitKeys(keyList=['g', 'space'])
         if key == ['g']:
             win.close()
-            player.destroy()
             core.quit()
         win.flip()
-    #with the test button and space
-    elif type == "with_test":
-        core.wait(2)
-        play('TEST')
-        key = event.waitKeys(keyList=['g', 'space', 't'])
+
+    # with the 1-9 lickert scale
+    elif type == "with_scale":
+        key = event.getKeys(conf['SCALE'])
         if key == ['g']:
             win.close()
-            player.destroy()
-            core.quit()
-        elif key == ['t']:
-            play('TEST')
-        win.flip()
-    # # with the 1-9 lickert scale
-    # elif type == "with_scale":
-    #     key = event.getKeys(conf['SCALE'])
-    #     if key == ['g']:
-    #         win.close()
-    #         player.destroy()
-    #         core.quit()   
+            core.quit()   
     #only exit button is available
     elif type == "without_space":
         key = event.getKeys(keyList=['g'])
         if key == ['g']:
             win.close()
-            player.destroy()
             core.quit()
 
 #--------------------------------------------------
@@ -114,41 +82,16 @@ def save_data():
 #--------------------------------------------------
 #submits patterns according to index 
 #--------------------------------------------------
-def play(index):
-    if index == '1_L':
-        print("submit 1_L")
-        player.submit_registered("1_L")  
-    elif index == '2_L':
-        print("submit 2_L")
-        player.submit_registered("2_L")
-    elif index == '3_L':
-        print("submit 3_L")
-        player.submit_registered("3_L")
-    elif index == '1_R':
-        print("submit 1_R")
-        player.submit_registered("1_R")  
-    elif index == '2_R':
-        print("submit 2_R")
-        player.submit_registered("2_R")
-    elif index == '3_R':
-        print("submit 3_R")
-        player.submit_registered("3_R")
-    elif index == "FIX":
-        print("submit FIX")
-        player.submit_dot("backFrame", "VestBack", [{"index": 6, "intensity": 100}], 500)
-        player.submit_dot("backFrame", "VestBack", [{"index": 7, "intensity": 100}], 500)
-    elif index == "TEST":
-        print("submit TEST")
-        # player.submit_registered("Circle")
-        for i in range(0,20):
-            player.submit_dot("backFrame", "VestBack", [{"index": i, "intensity": 100}], 500)
-
+def play(win, index):
+    if index == 'L':
+        image_stim = visual.ImageStim(win, image= "arrow_L.png", pos = (-400,0), size=(150, 100))
+        image_stim.draw()
+    elif index == 'R':
+        image_stim = visual.ImageStim(win, image= "arrow_R.png", pos = (400,0), size=(150, 100))
+        image_stim.draw()
+    
     return index
-        # print("submit Circle With Diff AltKey")
-        # player.submit_registered_with_option("Circle", "alt2",
-        #                                      scale_option={"intensity": 1, "duration": 1},
-        #                                      rotation_option={"offsetAngleX": 0, "offsetY": 0})
-
+        
 #--------------------------------------------------
 #randomisation of the trials
 #return the list of the trials in the random order
@@ -156,30 +99,32 @@ def play(index):
 def shaffle_trials(number_of_trials, number_of_patters):
     sets = int(number_of_trials/number_of_patters)
     stim_order = []
-    [stim_order.extend(list(stim))  for i in range(sets)]
-    print(stim_order)
-    random.shuffle(stim_order)  
+    [stim_order.extend(list(stim)) for i in range(sets)]
+    random.shuffle(stim_order) 
+    print(stim_order) 
     return stim_order
 
 #--------------------------------------------------
 #one trial
 #--------------------------------------------------
 def run_trial(win, order, number):
-    global key, rt, corr, pattern, confidence, stim_type
+    global key, rt, corr, pattern, stim_type
 
     # fixation
     fix.setAutoDraw(True)
-    play('FIX')
     win.flip()
-    core.wait(random.randint(1,4)) 
+    core.wait(random.randint(1,4))
+    # conf['FIX_CROSS_TIME'] 
 
     #create the screen
     event.clearEvents()
     win.callOnFlip(clock.reset)
 
     # play the stimulus
-    play(order[number])
+    play(win, order[number])
     stim_type = order[number]
+    print(stim_type)
+    print(order[number])
     win.flip()
 
     # reaction 
@@ -190,46 +135,33 @@ def run_trial(win, order, number):
             break
         if key == ['g']:
             win.close()
-            player.destroy()
+
             core.quit()
    
     if clock.getTime() > conf['TIME_MAX']:
         rt = '-'
 
-    confidence = '-'
-
     fix.setAutoDraw(False)
     win.flip()
 
-    # clarity info
-    # if version =='confidence':
-    #     event.clearEvents()
-    #     win.callOnFlip(clock.reset)
-    #     show_info(window, join('.', 'messages', 'clarity_mess.txt'), "with_scale")
-    #     confidence = event.waitKeys(maxWait = conf['TIME_MAX'], keyList = conf['SCALE'])
 
     # breake between trials
     core.wait(conf['STIM_BREAK'])
 
     # pattern type
-    if (stim_type == "1_L") or (stim_type == "1_R"):
-        pattern = 1
-    elif (stim_type == "2_L") or (stim_type == "2_R"):
-        pattern = 2
-    elif (stim_type == "3_L") or (stim_type == "3_R"):
-        pattern = 3
+    if (stim_type == "L") or (stim_type == "R"):
+        pattern = 0
 
+    print(key)
     # corr = correctness
-    if (stim_type == "1_L" and key == ['q']) or (stim_type == "2_L" and key == ['q']) or (stim_type == "3_L" and key == ['q']) or \
-        (stim_type == "1_R" and key == ['p']) or (stim_type == "2_R" and key == ['p']) or (stim_type == "3_R" and key == ['q']):
+    if (stim_type == "L" and key == ['q']) or (stim_type == "R" and key == ['p']):
         corr = 1
-    elif (stim_type == "1_L" and key == ['p']) or (stim_type == "2_L" and key == ['p']) or (stim_type == "3_L" and key == ['p']) or \
-        (stim_type == "1_R" and key == ['q']) or (stim_type == "2_R" and key == ['q']) or (stim_type == "3_R" and key == ['q']):
+    elif (stim_type == "L" and key == ['p']) or (stim_type == "R" and key == ['q']):
         corr = 0
     else:
         corr = "-"
 
-    RESULTS.append([ID, trial_no, train, pattern, corr, confidence, rt])
+    RESULTS.append([ID, trial_no, train, pattern, corr, rt])
 
 #-----------------------------------------------------------------------------
 # experiment
@@ -237,7 +169,7 @@ def run_trial(win, order, number):
 # info window
 #info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
 info = {'ID': ''}
-dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) ')
+dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) Zapamiętaj ID do drugiej czesci badania')
 if not dlg.OK:
     print("User exited")
     core.quit()
@@ -255,11 +187,10 @@ window.setMouseVisible(True)
 
 # stimuli
 fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], height=conf['FIX_CROSS_SIZE'])
-stim = ('1_L','1_R', '2_L','2_R', '3_L','3_R')
+stim = ('L','R')
 
 # display first info
 show_info(window, join('.', 'messages', 'instr.txt'), "with_space")
-show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 
 #training
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
