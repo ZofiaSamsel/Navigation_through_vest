@@ -84,10 +84,10 @@ def save_data():
 #--------------------------------------------------
 def play(win, index):
     if index == 'L':
-        image_stim = visual.ImageStim(win, image= "arrow_L.png", pos = (-400,0), size=(150, 100))
+        image_stim = visual.ImageStim(win, image= "dot.png", pos = (-400,0), size=(100, 100))
         image_stim.draw()
     elif index == 'R':
-        image_stim = visual.ImageStim(win, image= "arrow_R.png", pos = (400,0), size=(150, 100))
+        image_stim = visual.ImageStim(win, image= "dot.png", pos = (400,0), size=(100, 100))
         image_stim.draw()
     
     return index
@@ -169,7 +169,7 @@ def run_trial(win, order, number):
 # info window
 #info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
 info = {'ID': ''}
-dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) Zapamiętaj ID do drugiej czesci badania')
+dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) Zapamietaj ID do drugiej czesci badania')
 if not dlg.OK:
     print("User exited")
     core.quit()
@@ -191,22 +191,23 @@ stim = ('L','R')
 
 # display first info
 show_info(window, join('.', 'messages', 'instr.txt'), "with_space")
+show_info(window, join('.', 'messages', 'instr_1.txt'), "with_space")
 
 #training
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
-# for block_no in range(conf['NO_BLOCK_TRAIN']):
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-for a in range(conf['N_TRIALS_TRAIN']):
-    trial_no = a + 1
-    train = 1
-    run_trial(window,order, a)
-window.flip()
+# # for block_no in range(conf['NO_BLOCK_TRAIN']):
+# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+# for a in range(conf['N_TRIALS_TRAIN']):
+#     trial_no = a + 1
+#     train = 1
+#     run_trial(window,order, a)
+# window.flip()
 
 # final experiment
-show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
+# show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
 
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+order = shaffle_trials(conf['N_TRIALS_EXP'], len(stim))
 for i in range(conf['N_TRIALS_EXP']):
     if i == 0:
         prev_stim = '0'
@@ -216,20 +217,20 @@ for i in range(conf['N_TRIALS_EXP']):
 
 event.waitKeys(maxWait=0)
 
-# for TIME_FOR_REAST display the mess without SPACE
-timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
-while timer.getTime() > 0:
-    show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
-show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
-window.flip()
+# # for TIME_FOR_REAST display the mess without SPACE
+# timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
+# while timer.getTime() > 0:
+#     show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
+# show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
+# window.flip()
 
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-for i in range(conf['N_TRIALS_EXP']):
-    if i == 0:
-        prev_stim = '0'
-    trial_no = i + 1
-    train = 0
-    run_trial(window, order, i) # with confidence space
+# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+# for i in range(conf['N_TRIALS_EXP']):
+#     if i == 0:
+#         prev_stim = '0'
+#     trial_no = i + 1
+#     train = 0
+#     run_trial(window, order, i) # with confidence space
 
 # ending
 save_data()

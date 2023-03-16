@@ -1,12 +1,8 @@
+Witamy na badniu rozpoznawania bodźców dotykowych.
 
-Na placech kamizelki będa prezentowane bodźce sugerujące zbliżające się bezpieczeństwo
-po lewej lub prawej stronie.
+W czasie badania na placech kamizelki będa prezentowane bodźce. Wyobraź sobie, że jesteś teraz w bardzo zatłoczonym miejscu.
+Bodźce, które odczuwasz mają ostrzegają Cię o kierunku zbliżającej się przeszkody, którą musisz ominąć. 
 
-Twoim zadaniem będzie naciśnięcie klawisza P w przypadku, gdy wydaje Ci się, że bodziec
-jest ostrzeżeniem z PRAWEJ strony lub klawisza Q jako ostrzeżenie przed przeszkodą 
-z LEWEJ.
-
-Odpowiadaj najszybciej jak potrafisz!
-
-
+Twoim zadaniem będzie określenie jak interpretujesz bodziec. 
+ 
 Kliknij SPACJĘ, by kontynuować.

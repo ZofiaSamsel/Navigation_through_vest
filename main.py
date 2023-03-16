@@ -133,21 +133,13 @@ def play(index):
     elif index == '3_R':
         print("submit 3_R")
         player.submit_registered("3_R")
-    elif index == "FIX":
-        print("submit FIX")
-        player.submit_dot("backFrame", "VestBack", [{"index": 6, "intensity": 100}], 500)
-        player.submit_dot("backFrame", "VestBack", [{"index": 7, "intensity": 100}], 500)
     elif index == "TEST":
         print("submit TEST")
-        # player.submit_registered("Circle")
-        for i in range(0,20):
-            player.submit_dot("backFrame", "VestBack", [{"index": i, "intensity": 100}], 500)
+        for i in range(20):
+            print(i)
+            player.submit_dot("backFrame", "VestBack", [{"index": i, "intensity": 100}], 100)
 
     return index
-        # print("submit Circle With Diff AltKey")
-        # player.submit_registered_with_option("Circle", "alt2",
-        #                                      scale_option={"intensity": 1, "duration": 1},
-        #                                      rotation_option={"offsetAngleX": 0, "offsetY": 0})
 
 #--------------------------------------------------
 #randomisation of the trials
@@ -165,11 +157,11 @@ def shaffle_trials(number_of_trials, number_of_patters):
 #one trial
 #--------------------------------------------------
 def run_trial(win, order, number):
-    global key, rt, corr, pattern, confidence, stim_type
+    global key, rt, corr, pattern, stim_type
 
     # fixation
-    fix.setAutoDraw(True)
-    play('FIX')
+    # fix.setAutoDraw(True)
+    # play('FIX')
     win.flip()
     core.wait(random.randint(1,4)) 
 
@@ -196,18 +188,6 @@ def run_trial(win, order, number):
     if clock.getTime() > conf['TIME_MAX']:
         rt = '-'
 
-    confidence = '-'
-
-    fix.setAutoDraw(False)
-    win.flip()
-
-    # clarity info
-    # if version =='confidence':
-    #     event.clearEvents()
-    #     win.callOnFlip(clock.reset)
-    #     show_info(window, join('.', 'messages', 'clarity_mess.txt'), "with_scale")
-    #     confidence = event.waitKeys(maxWait = conf['TIME_MAX'], keyList = conf['SCALE'])
-
     # breake between trials
     core.wait(conf['STIM_BREAK'])
 
@@ -229,7 +209,7 @@ def run_trial(win, order, number):
     else:
         corr = "-"
 
-    RESULTS.append([ID, trial_no, train, pattern, corr, confidence, rt])
+    RESULTS.append([ID, trial_no, train, pattern, corr, rt])
 
 #-----------------------------------------------------------------------------
 # experiment
@@ -250,7 +230,7 @@ ID = info['ID']
 datafile = '{}.csv'.format(ID)
 
 # create window
-window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=False, size=(1000, 1000))
+window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=True, size=(1000, 1000))
 window.setMouseVisible(True)
 
 # stimuli
@@ -259,21 +239,22 @@ stim = ('1_L','1_R', '2_L','2_R', '3_L','3_R')
 
 # display first info
 show_info(window, join('.', 'messages', 'instr.txt'), "with_space")
+show_info(window, join('.', 'messages', 'instr_1.txt'), "with_space")
 show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 
-#training
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
-# for block_no in range(conf['NO_BLOCK_TRAIN']):
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-for a in range(conf['N_TRIALS_TRAIN']):
-    trial_no = a + 1
-    train = 1
-    run_trial(window,order, a)
-window.flip()
+#training
+# # for block_no in range(conf['NO_BLOCK_TRAIN']):
+# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+# for a in range(conf['N_TRIALS_TRAIN']):
+#     trial_no = a + 1
+#     train = 1
+#     run_trial(window,order, a)
+# window.flip()
 
 # final experiment
-show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
+# show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
 
 order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
 for i in range(conf['N_TRIALS_EXP']):
@@ -285,26 +266,23 @@ for i in range(conf['N_TRIALS_EXP']):
 
 event.waitKeys(maxWait=0)
 
-# for TIME_FOR_REAST display the mess without SPACE
-timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
-while timer.getTime() > 0:
-    show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
-show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
-window.flip()
+# # for TIME_FOR_REAST display the mess without SPACE
+# timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
+# while timer.getTime() > 0:
+#     show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
+# show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
+# window.flip()
 
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-for i in range(conf['N_TRIALS_EXP']):
-    if i == 0:
-        prev_stim = '0'
-    trial_no = i + 1
-    train = 0
-    run_trial(window, order, i) # with confidence space
+# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+# for i in range(conf['N_TRIALS_EXP']):
+#     if i == 0:
+#         prev_stim = '0'
+#     trial_no = i + 1
+#     train = 0
+#     run_trial(window, order, i) 
 
 # ending
 save_data()
 show_info(window, join('.', 'messages', 'fin_mess.txt'), "with_space")
 window.close()
 core.quit()
-
-# if __name__ == "__main__":
-#     run()
