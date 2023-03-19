@@ -15,12 +15,12 @@ import atexit
 
 
 # load config file
-conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
+conf = yaml.load(open('config control.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 
 clock = core.Clock()
 
 # RESULTS = conf(['RESULTS'])
-RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "LATENCY"]]
+RESULTS = [["PART_ID", "TRIAL", "WARUNEK", "PATTERN", "CORRECT", "LATENCY"]]
 
 #--------------------------------------------------
 #read text from file or add some extra text
@@ -45,7 +45,8 @@ def read_text_from_file(file_name, insert=''):
 type = ""
 def show_info(win, file_name, type, insert=''):
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
+    msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'], alignText='center' )
+
     msg.draw()
     win.flip()
 
@@ -83,10 +84,16 @@ def save_data():
 #submits patterns according to index 
 #--------------------------------------------------
 def play(win, index):
-    if index == 'L':
+    if index == 'L1':
+        image_stim = visual.ImageStim(win, image= "dot.png", pos = (-700,0), size=(100, 100))
+        image_stim.draw()
+    elif index == 'R1':
+        image_stim = visual.ImageStim(win, image= "dot.png", pos = (700,0), size=(100, 100))
+        image_stim.draw()
+    elif index == 'L2':
         image_stim = visual.ImageStim(win, image= "dot.png", pos = (-400,0), size=(100, 100))
         image_stim.draw()
-    elif index == 'R':
+    elif index == 'R2':
         image_stim = visual.ImageStim(win, image= "dot.png", pos = (400,0), size=(100, 100))
         image_stim.draw()
     
@@ -149,14 +156,16 @@ def run_trial(win, order, number):
     core.wait(conf['STIM_BREAK'])
 
     # pattern type
-    if (stim_type == "L") or (stim_type == "R"):
+    if (stim_type == "L1") or (stim_type == "R1"):
         pattern = 0
+    if (stim_type == "L2") or (stim_type == "R2"):
+        pattern = 4
 
     print(key)
     # corr = correctness
-    if (stim_type == "L" and key == ['q']) or (stim_type == "R" and key == ['p']):
+    if (stim_type == "L1" and key == ['q']) or (stim_type == "R1" and key == ['p']) or (stim_type == "L2" and key == ['q']) or (stim_type == "R2" and key == ['p']):
         corr = 1
-    elif (stim_type == "L" and key == ['p']) or (stim_type == "R" and key == ['q']):
+    elif (stim_type == "L1" and key == ['p']) or (stim_type == "R1" and key == ['q']) or (stim_type == "L2" and key == ['p']) or (stim_type == "R2" and key == ['q']):
         corr = 0
     else:
         corr = "-"
@@ -168,30 +177,30 @@ def run_trial(win, order, number):
 #-----------------------------------------------------------------------------
 # info window
 #info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
-info = {'ID': ''}
-dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) Zapamietaj ID do drugiej czesci badania')
+info = {'ID': '', 'WARUNEK': ''}
+dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :)')
 if not dlg.OK:
     print("User exited")
     core.quit()
 
 # create ID
 #ID = info['ID'] + info['PLEC'] + info['WIEK']
-ID = info['ID']
+ID = info['ID'] + info['WARUNEK']
 
 # create the data file 
 datafile = '{}.csv'.format(ID)
 
 # create window
-window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=False, size=(1000, 1000))
-window.setMouseVisible(True)
+window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=True, size=(1000, 1000))
+window.setMouseVisible(False)
 
 # stimuli
 fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], height=conf['FIX_CROSS_SIZE'])
-stim = ('L','R')
+stim = ('L1','R1', 'L2','R2')
 
 # display first info
-show_info(window, join('.', 'messages', 'instr.txt'), "with_space")
-show_info(window, join('.', 'messages', 'instr_1.txt'), "with_space")
+show_info(window, join('.', 'messages', 'instrControl.txt'), "with_space")
+show_info(window, join('.', 'messages', 'instr_1Control.txt'), "with_space")
 
 #training
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")

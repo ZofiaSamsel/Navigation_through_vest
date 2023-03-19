@@ -3,7 +3,7 @@ BACKGROUND_COLOR: gray
 # NO_BLOCK_TRAIN: 1  #ilość bloków tren.
 # NO_BLOCK_EXP: 2 #ilość bloków eksp.
 # N_TRIALS_TRAIN: 6 #podzielne przez 6
-N_TRIALS_EXP: 36 #podzielne przez 6 
+N_TRIALS_EXP: 24 #podzielne przez 6 
 REACTION_KEYS: ['q', 'p', 'g']
 RESULTS: [["PART_ID", "TRIAL", "CONTROL", "PATTERN", "CORRECT", "LATENCY"]]
 # TIME_BREAK: 0.1

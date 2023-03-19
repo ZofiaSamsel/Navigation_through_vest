@@ -31,6 +31,8 @@ print("register 3_R")
 player.register("3_R", "3_R.tact")
 print("register Circle")
 player.register("Circle", "Circle.tact")
+print("register TEST")
+player.register("TEST", "TEST.tact")
 
 # load config file
 conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
@@ -38,7 +40,7 @@ conf = yaml.load(open('config.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 clock = core.Clock()
 
 # RESULTS = conf(['RESULTS'])
-RESULTS = [["PART_ID", "TRIAL", "TRAINING","PATTERN", "CORRECT", "CONFIDENCE", "LATENCY"]]
+RESULTS = [["PART_ID", "TRIAL", "WARUNEK", "PATTERN", "CORRECT", "LATENCY"]]
 
 #--------------------------------------------------
 #read text from file or add some extra text
@@ -63,7 +65,7 @@ def read_text_from_file(file_name, insert=''):
 type = ""
 def show_info(win, file_name, type, insert=''):
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'])
+    msg = visual.TextStim(win, color=conf['TEXT_COLOR'], text=msg, height=conf['TEXT_SIZE'], alignText='center' )
     msg.draw()
     win.flip()
 
@@ -135,9 +137,7 @@ def play(index):
         player.submit_registered("3_R")
     elif index == "TEST":
         print("submit TEST")
-        for i in range(20):
-            print(i)
-            player.submit_dot("backFrame", "VestBack", [{"index": i, "intensity": 100}], 100)
+        player.submit_registered("TEST")
 
     return index
 
@@ -204,7 +204,7 @@ def run_trial(win, order, number):
         (stim_type == "1_R" and key == ['p']) or (stim_type == "2_R" and key == ['p']) or (stim_type == "3_R" and key == ['q']):
         corr = 1
     elif (stim_type == "1_L" and key == ['p']) or (stim_type == "2_L" and key == ['p']) or (stim_type == "3_L" and key == ['p']) or \
-        (stim_type == "1_R" and key == ['q']) or (stim_type == "2_R" and key == ['q']) or (stim_type == "3_R" and key == ['q']):
+        (stim_type == "1_R" and key == ['q']) or (stim_type == "2_R" and key == ['q']) or (stim_type == "3_R" and key == ['p']):
         corr = 0
     else:
         corr = "-"
@@ -216,7 +216,7 @@ def run_trial(win, order, number):
 #-----------------------------------------------------------------------------
 # info window
 #info = {'ID': '', 'PLEC': ['M', 'K'], 'WIEK': ''}
-info = {'ID': ''}
+info = {'ID': '', 'WARUNEK': ''}
 dlg = gui.DlgFromDict(info, title='Wpisz swoje dane :) ')
 if not dlg.OK:
     print("User exited")
@@ -224,14 +224,14 @@ if not dlg.OK:
 
 # create ID
 #ID = info['ID'] + info['PLEC'] + info['WIEK']
-ID = info['ID']
+ID = info['ID'] + info['WARUNEK']
 
 # create the data file 
 datafile = '{}.csv'.format(ID)
 
 # create window
 window = visual.Window(units="pix", color=conf['BACKGROUND_COLOR'], fullscr=True, size=(1000, 1000))
-window.setMouseVisible(True)
+window.setMouseVisible(False)
 
 # stimuli
 fix = visual.TextStim(win=window, text="+", color=conf['FIX_CROSS_COLOR'], height=conf['FIX_CROSS_SIZE'])
@@ -244,42 +244,16 @@ show_info(window, join('.', 'messages', 'instr2.txt'), "with_test")
 
 show_info(window, join('.', 'messages', 'train_mess.txt'), "with_space")
 
-#training
-# # for block_no in range(conf['NO_BLOCK_TRAIN']):
-# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-# for a in range(conf['N_TRIALS_TRAIN']):
-#     trial_no = a + 1
-#     train = 1
-#     run_trial(window,order, a)
-# window.flip()
 
-# final experiment
-# show_info(window, join('.', 'messages', 'exp_mess.txt'), "with_space")
-
-order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
+order = shaffle_trials(conf['N_TRIALS_EXP'], len(stim))
 for i in range(conf['N_TRIALS_EXP']):
     if i == 0:
         prev_stim = '0'
     trial_no = i + 1
-    train = 0
+    train = 1
     run_trial(window,order , i)
 
 event.waitKeys(maxWait=0)
-
-# # for TIME_FOR_REAST display the mess without SPACE
-# timer = core.CountdownTimer(conf['TIME_FOR_REAST'])
-# while timer.getTime() > 0:
-#     show_info(window, join('.', 'messages', 'break_mess.txt'), "without_space")
-# show_info(window, join('.', 'messages', 'break_mess2.txt'), "with_space")
-# window.flip()
-
-# order = shaffle_trials(conf['N_TRIALS_TRAIN'], len(stim))
-# for i in range(conf['N_TRIALS_EXP']):
-#     if i == 0:
-#         prev_stim = '0'
-#     trial_no = i + 1
-#     train = 0
-#     run_trial(window, order, i) 
 
 # ending
 save_data()
