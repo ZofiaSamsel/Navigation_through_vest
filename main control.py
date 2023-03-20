@@ -148,7 +148,7 @@ def run_trial(win, order, number):
     if clock.getTime() > conf['TIME_MAX']:
         rt = '-'
 
-    fix.setAutoDraw(False)
+    fix.setAutoDraw(True)
     win.flip()
 
 
