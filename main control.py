@@ -133,6 +133,8 @@ def run_trial(win, order, number):
     print(stim_type)
     print(order[number])
     win.flip()
+    core.wait(1)
+    win.flip()
 
     # reaction 
     while clock.getTime() <= conf['TIME_MAX']:
